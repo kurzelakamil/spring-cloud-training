@@ -1,4 +1,0 @@
-armeria:
-  ports:
-    - port: 8090
-      protocol: HTTP
