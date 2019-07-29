@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: discovery
+  cloud:
+    config:
+      label: 01-Base-elements
+      #uri: http://localhost:8888
