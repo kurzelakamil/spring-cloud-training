@@ -3,5 +3,5 @@ spring:
     name: users
   cloud:
     config:
-      label: 01-Base-elements
+      label: 02-Communication
       #uri: http://localhost:8888

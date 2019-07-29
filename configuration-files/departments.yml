@@ -10,3 +10,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: departments
+          content-type: application/json
