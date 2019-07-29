@@ -2,10 +2,7 @@ package pl.training.cloud.users.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -16,5 +13,8 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
+    private Long departmentId;
+    @Transient
+    private String departmentName;
 
 }
