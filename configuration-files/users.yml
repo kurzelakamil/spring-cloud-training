@@ -17,4 +17,4 @@ spring:
           destination: departments
           content-type: application/json
           #group: departments
-defaultDepartmentId: 2
+defaultDepartmentId: 3
