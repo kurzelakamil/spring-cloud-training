@@ -2,11 +2,10 @@ package pl.training.cloud.users.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import pl.training.cloud.users.config.DepartmentsConfig;
 import pl.training.cloud.users.model.ResultPage;
 import pl.training.cloud.users.model.User;
 import pl.training.cloud.users.repository.UsersRepository;
@@ -19,13 +18,12 @@ public class UsersService {
     private UsersRepository usersRepository;
     @NonNull
     private DepartmentsService departmentsService;
-    @Value("${defaultDepartmentId}")
-    @Setter
-    private Long defaultDepartmentId;
+    @NonNull
+    private DepartmentsConfig departmentsConfig;
 
     public void addUser(User user) {
         if (user.getDepartmentId() == null) {
-            user.setDepartmentId(defaultDepartmentId);
+            user.setDepartmentId(departmentsConfig.getDefaultDepartmentId());
         }
         usersRepository.saveAndFlush(user);
     }
