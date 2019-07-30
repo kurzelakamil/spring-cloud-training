@@ -3,5 +3,5 @@ spring:
     name: discovery
   cloud:
     config:
-      label: 03-Availability
+      label: 04-Docker
       #uri: http://localhost:8888
