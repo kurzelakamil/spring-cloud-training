@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: zipkin
+  main:
+    web-application-type: none
+  cloud:
+    config:
+      label: 03-Availability
+      #uri: http://localhost:8888

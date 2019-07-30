@@ -30,7 +30,7 @@ public class SimpleDepartmentsService implements DepartmentsService {
     @Cacheable(value = "departments", unless = "#result == null")
     @Override
     public Optional<String> getDepartmentName(Long departmentId) {
-       Optional<String> resourceUri = getResourceUri(departmentId);
+        Optional<String> resourceUri = getResourceUri(departmentId);
         if (resourceUri.isPresent()) {
             return getDepartmentName(resourceUri.get());
         } else {

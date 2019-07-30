@@ -5,3 +5,8 @@ spring:
     config:
       label: 03-Availability
       #uri: http://localhost:8888
+management:
+  endpoints:
+    web:
+        exposure:
+            include: '*'
