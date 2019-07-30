@@ -12,3 +12,7 @@ eureka:
       defaultZone: http://localhost:8089/eureka/
   instance:
     preferIpAddress: true
+  boot:
+    admin:
+      client:
+        url: http://localhost:8081
