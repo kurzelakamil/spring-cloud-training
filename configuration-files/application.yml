@@ -1,6 +1,11 @@
 spring:
   jackson:
     default-property-inclusion: non_null
+  sleuth:
+    sampler:
+      probability: 1
+  zipkin:
+    base-url: http://localhost:8090
 eureka:
   client:
     serviceUrl:
