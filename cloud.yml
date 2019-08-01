@@ -1,0 +1,165 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloud-config
+data:
+  KAFKA_ADVERTISED_HOST_NAME: 'localhost'
+  KAFKA_ZOOKEEPER_CONNECT: 'localhost:2181'
+  KAFKA_SERVER: 'broker-service'
+  KAFKA_PORT: '9092'
+  SLEEP_TIME: '1'
+  DEFAULT_PROFILE: 'production'
+  POSTGRES_USER: admin
+  POSTGRES_PASSWORD: admin
+  POSTGRES_DB: departments
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+  labels:
+    app-name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: broker
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 2
+  template:
+    metadata:
+      labels:
+        app-name: broker
+    spec:
+      containers:
+        - name: zookeeper
+          image: wurstmeister/zookeeper
+        - name: kafka
+          image: wurstmeister/kafka
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          ports:
+            - containerPort: 9092
+              name: kafka
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-service
+spec:
+  selector:
+    app-name: broker
+  ports:
+    - port: 9092
+      targetPort: kafka
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configuration-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app-name: configuration-server
+  template:
+    metadata:
+      labels:
+        app-name: configuration-server
+    spec:
+      containers:
+        - name: configuration-server
+          image: landrzejewski/configuration-server
+          ports:
+            - containerPort: 8888
+              name: config-server
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          livenessProbe:
+            httpGet:
+              port: 8888
+              path: /05-Kubernetes/application-default.yaml
+            initialDelaySeconds: 5
+            failureThreshold: 3
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-server-service
+spec:
+  selector:
+    app-name: configuration-server
+  ports:
+    - port: 8888
+      targetPort: config-server
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: departments-volume
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/departments
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: departments-volume
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: postgres-server
+  template:
+    metadata:
+      labels:
+        app-name: postgres-server
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:11.1
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: storage
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: departments-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-server-service
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app-name: postgres-server
+---

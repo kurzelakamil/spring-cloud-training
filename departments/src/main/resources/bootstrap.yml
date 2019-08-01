@@ -3,5 +3,5 @@ spring:
     name: departments
   cloud:
     config:
-      label: 04-Docker
+      label: 05-Kubernetes
       #uri: http://localhost:8888
