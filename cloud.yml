@@ -372,3 +372,16 @@ spec:
             backend:
               serviceName: users-service
               servicePort: 80
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: admin-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            backend:
+              serviceName: zipkin-server-service
+              servicePort: 80
