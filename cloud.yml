@@ -227,7 +227,7 @@ spec:
           livenessProbe:
             periodSeconds: 10
             failureThreshold: 3
-            initialDelaySeconds: 10
+            initialDelaySeconds: 180
             httpGet:
               port: 8000
               path: /swagger-ui.html
@@ -338,7 +338,7 @@ spec:
           livenessProbe:
             periodSeconds: 10
             failureThreshold: 3
-            initialDelaySeconds: 10
+            initialDelaySeconds: 180
             httpGet:
               port: 8001
               path: /swagger-ui.html
