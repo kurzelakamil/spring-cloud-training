@@ -82,7 +82,7 @@ spec:
             - configMapRef:
                 name: cloud-config
           livenessProbe:
-            periodSeconds: 10
+            periodSeconds: 1800
             failureThreshold: 3
             initialDelaySeconds: 10
             httpGet:
