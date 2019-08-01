@@ -5,7 +5,7 @@ spring:
         binder:
           brokers: broker-service
   zipkin:
-    base-url: http://zipkin-server:8090
+    base-url: http://zipkin-server-service:8090
   jpa:
     hibernate:
       ddl-auto: update

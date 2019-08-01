@@ -107,7 +107,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /tmp/departments_db
+    path: /tmp/departments_data
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -218,7 +218,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: /tmp/users_db
+    path: /tmp/users_data
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -318,3 +318,22 @@ spec:
       targetPort: http
   selector:
     app-name: users
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: cloud-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /departments(/|$)(.*)
+            backend:
+              serviceName: departments-service
+              servicePort: 80
+          - path: /users(/|$)(.*)
+            backend:
+              serviceName: users-service
+              servicePort: 80
