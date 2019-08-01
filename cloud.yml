@@ -189,13 +189,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: cloud-config
-          livenessProbe:
-            periodSeconds: 10
-            failureThreshold: 3
-            initialDelaySeconds: 10
-            httpGet:
-              port: 8000
-              path: /swagger-ui.html
+#          livenessProbe:
+#            periodSeconds: 10
+#            failureThreshold: 3
+#            initialDelaySeconds: 10
+#            httpGet:
+#              port: 8000
+#              path: /swagger-ui.html
 ---
 apiVersion: v1
 kind: Service
@@ -203,7 +203,7 @@ metadata:
   name: departments-service
 spec:
   ports:
-    - port: 8000
+    - port: 80
       targetPort: http
   selector:
     app-name: departments
@@ -300,13 +300,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: cloud-config
-          livenessProbe:
-            periodSeconds: 10
-            failureThreshold: 3
-            initialDelaySeconds: 10
-            httpGet:
-              port: 8001
-              path: /swagger-ui.html
+#          livenessProbe:
+#            periodSeconds: 10
+#            failureThreshold: 3
+#            initialDelaySeconds: 10
+#            httpGet:
+#              port: 8001
+#              path: /swagger-ui.html
 ---
 apiVersion: v1
 kind: Service
@@ -314,7 +314,7 @@ metadata:
   name: users-service
 spec:
   ports:
-    - port: 8001
+    - port: 80
       targetPort: http
   selector:
     app-name: users
