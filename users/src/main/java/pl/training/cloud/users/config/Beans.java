@@ -15,7 +15,7 @@ import static springfox.documentation.builders.RequestHandlerSelectors.basePacka
 import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
 @EnableBinding(Sink.class)
-@EnableFeignClients(basePackages = "pl.training.cloud")
+//@EnableFeignClients(basePackages = "pl.training.cloud")
 @EnableCaching
 @EnableSwagger2
 @Configuration
@@ -31,7 +31,7 @@ public class Beans {
                 .build();
     }
 
-    @LoadBalanced
+    //@LoadBalanced
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

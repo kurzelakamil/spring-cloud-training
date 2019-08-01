@@ -20,8 +20,8 @@ import java.util.Optional;
                 @HystrixProperty(name = "metrics.rollingStats.numBuckets", value = "10")
         }
 )*/
-@Primary
-@Service
+//@Primary
+//@Service
 @Log
 @RequiredArgsConstructor
 public class FeignDepartmentsService implements DepartmentsService {

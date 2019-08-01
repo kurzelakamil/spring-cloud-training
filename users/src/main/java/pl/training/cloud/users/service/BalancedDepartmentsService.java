@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -11,12 +12,13 @@ import pl.training.cloud.users.dto.DepartmentDto;
 
 import java.util.Optional;
 
+@Primary
 @Log
 @Service
 @RequiredArgsConstructor
 public class BalancedDepartmentsService implements DepartmentsService {
 
-    private static final String RESOURCE_URI = "http://departments/departments/";
+    private static final String RESOURCE_URI = "http://departments-service/departments/";
 
     @NonNull
     private RestTemplate restTemplate;
