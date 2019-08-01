@@ -74,7 +74,7 @@ spec:
           image: landrzejewski/configuration-server
           ports:
             - containerPort: 8888
-              name: config-server
+              name: http
           envFrom:
             - configMapRef:
                 name: cloud-config
@@ -95,7 +95,42 @@ spec:
     app-name: configuration-server
   ports:
     - port: 8888
-      targetPort: config-server
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: zipkin-server
+  template:
+    metadata:
+      labels:
+        app-name: zipkin-server
+    spec:
+      containers:
+        - name: zipkin-server
+          image: landrzejewski/zipkin-server
+          ports:
+            - containerPort: 8090
+              name: http
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin-server-service
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+  selector:
+    app-name: zipkin-server
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -189,13 +224,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: cloud-config
-#          livenessProbe:
-#            periodSeconds: 10
-#            failureThreshold: 3
-#            initialDelaySeconds: 10
-#            httpGet:
-#              port: 8000
-#              path: /swagger-ui.html
+          livenessProbe:
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            httpGet:
+              port: 8000
+              path: /swagger-ui.html
 ---
 apiVersion: v1
 kind: Service
@@ -300,13 +335,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: cloud-config
-#          livenessProbe:
-#            periodSeconds: 10
-#            failureThreshold: 3
-#            initialDelaySeconds: 10
-#            httpGet:
-#              port: 8001
-#              path: /swagger-ui.html
+          livenessProbe:
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            httpGet:
+              port: 8001
+              path: /swagger-ui.html
 ---
 apiVersion: v1
 kind: Service
