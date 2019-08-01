@@ -63,7 +63,7 @@ kind: Deployment
 metadata:
   name: configuration-server
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app-name: configuration-server
@@ -81,6 +81,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: cloud-config
+          livenessProbe:
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            httpGet:
+              port: 8888
+              path: /05-Kubernetes/application-default.yaml
 ---
 apiVersion: v1
 kind: Service
@@ -121,7 +128,7 @@ kind: Deployment
 metadata:
   name: postgres-server
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app-name: postgres-server
@@ -181,3 +188,21 @@ spec:
           envFrom:
             - configMapRef:
                 name: cloud-config
+          livenessProbe:
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            httpGet:
+              port: 8000
+              path: /swagger-ui.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: departments-service
+spec:
+  ports:
+    - port: 8000
+      targetPort: http
+  selector:
+    app-name: departments
