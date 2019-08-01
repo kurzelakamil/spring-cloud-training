@@ -3,4 +3,4 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: kafka
+          brokers: broker-service
