@@ -40,3 +40,15 @@ Content-Type: application/x-www-form-urlencoded
 path=users
 
 ###
+
+POST http://localhost:8888/encrypt
+
+Spring cloud
+
+###
+
+POST http://localhost:8888/decrypt
+
+8f5489fd9b9904e234eb51e27667584de44d5389cf737b743cc34a9ca612917c
+
+###
