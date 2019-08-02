@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 public class JWTTokenStore {
 
-    @Value("#{signing.key}")
+    @Value("${signing.key}")
     @Setter
     private String jwtSigningKey;
 

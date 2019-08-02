@@ -134,6 +134,11 @@
             <version>${swagger.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.2</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -32,8 +32,7 @@ Content-Type: application/json
 POST http://localhost:8001/users
 Content-Type: application/json
 
-{"firstName":  "Jan", "lastName": "Kowalski"}
-
+{"login":  "jan", "password": "123", "firstName":  "Jan", "lastName": "Kowalski"}
 
 ###
 
