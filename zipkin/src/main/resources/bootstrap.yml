@@ -5,5 +5,5 @@ spring:
     web-application-type: none
   cloud:
     config:
-      label: 03-Availability
+      label: 06-Security
       #uri: http://localhost:8888

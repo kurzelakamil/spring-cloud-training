@@ -3,7 +3,7 @@ spring:
     name: users
   cloud:
     config:
-      label: 03-Availability
+      label: 06-Security
       #uri: http://localhost:8888
 management:
   endpoints:
