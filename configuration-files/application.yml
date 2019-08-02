@@ -16,3 +16,5 @@ eureka:
       defaultZone: http://localhost:8089/eureka/
   instance:
     preferIpAddress: true
+signing:
+  key: "{cipher}8f5489fd9b9904e234eb51e27667584de44d5389cf737b743cc34a9ca612917c"
