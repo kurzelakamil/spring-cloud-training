@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pl.training.cloud.users.dto.PageDto;
 import pl.training.cloud.users.dto.UserDto;
@@ -13,6 +14,7 @@ import pl.training.cloud.users.model.User;
 import pl.training.cloud.users.service.UsersService;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 @RequestMapping(value = "users")
@@ -35,8 +37,8 @@ public class UsersController {
     }
 
     @RequestMapping(value = "active", method = RequestMethod.GET)
-    public UserDto getActiveUser(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
+    public UserDto getActiveUser(Principal principal) {
+        UserDetails user = usersService.loadUserByUsername(principal.getName());
         return mapper.map(user, UserDto.class);
     }
 

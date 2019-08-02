@@ -1,4 +1,4 @@
-package pl.training.cloud.users.config;
+package pl.training.cloud.departments.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,8 +14,7 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.GET, "/users/active").authenticated()
+                .antMatchers(HttpMethod.POST, "/departments").permitAll()
                 .antMatchers("/**").hasRole("USER");
     }
 

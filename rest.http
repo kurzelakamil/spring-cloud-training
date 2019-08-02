@@ -36,9 +36,22 @@ Content-Type: application/json
 
 ###
 
+POST http://localhost:8001/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+username=jan&password=123&client_id=training&grant_type=password
+
+###
+
+GET http://localhost:8001/users/active
+Accept: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NjQ3ODAzMzgsInVzZXJfbmFtZSI6ImphbiIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiJmNWZjYjMwYi0xMjY5LTQ3NzgtYjMzZS01OTYxZDFhZTE3Y2QiLCJjbGllbnRfaWQiOiJ0cmFpbmluZyIsInNjb3BlIjpbImFwaSJdfQ.JoriwLW_0-VKeNR3maHW3djSw3pJXcDT9ZY_l0lndxg
+
+###
+
 GET http://localhost:8001/users
 Accept: application/json
-
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NjQ3ODAzMzgsInVzZXJfbmFtZSI6ImphbiIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiJmNWZjYjMwYi0xMjY5LTQ3NzgtYjMzZS01OTYxZDFhZTE3Y2QiLCJjbGllbnRfaWQiOiJ0cmFpbmluZyIsInNjb3BlIjpbImFwaSJdfQ.JoriwLW_0-VKeNR3maHW3djSw3pJXcDT9ZY_l0lndxg
 
 ###
 
