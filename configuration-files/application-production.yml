@@ -4,6 +4,10 @@ spring:
       kafka:
         binder:
           brokers: broker-service
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-server-service:8089/eureka/
   zipkin:
     base-url: http://zipkin-server-service:8090
   jpa:
