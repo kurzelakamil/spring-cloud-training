@@ -1,0 +1,387 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloud-config
+data:
+  KAFKA_ADVERTISED_HOST_NAME: broker-service
+  KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+  KAFKA_SERVER: broker-service
+  KAFKA_PORT: '9092'
+  SLEEP_TIME: '1'
+  DEFAULT_PROFILE: production
+  POSTGRES_USER: admin
+  POSTGRES_PASSWORD: admin
+  CONFIGURATION_SERVER: configuration-server-service
+  CONFIGURATION_SERVER_PORT: '8888'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: broker
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 2
+  template:
+    metadata:
+      labels:
+        app-name: broker
+    spec:
+      containers:
+        - name: zookeeper
+          image: wurstmeister/zookeeper
+        - name: kafka
+          image: wurstmeister/kafka
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          ports:
+            - containerPort: 9092
+              name: kafka
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broker-service
+spec:
+  selector:
+    app-name: broker
+  ports:
+    - port: 9092
+      targetPort: kafka
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configuration-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: configuration-server
+  template:
+    metadata:
+      labels:
+        app-name: configuration-server
+    spec:
+      containers:
+        - name: configuration-server
+          image: landrzejewski/configuration-server
+          ports:
+            - containerPort: 8888
+              name: http
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          livenessProbe:
+            periodSeconds: 1800
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            httpGet:
+              port: 8888
+              path: /05-Kubernetes/application-default.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: configuration-server-service
+spec:
+  selector:
+    app-name: configuration-server
+  ports:
+    - port: 8888
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: zipkin-server
+  template:
+    metadata:
+      labels:
+        app-name: zipkin-server
+    spec:
+      containers:
+        - name: zipkin-server
+          image: landrzejewski/zipkin-server
+          ports:
+            - containerPort: 8090
+              name: http
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin-server-service
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+  selector:
+    app-name: zipkin-server
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: departments-volume
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/departments_data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: departments-volume
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: departments-postgres-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: departments-postgres-server
+  template:
+    metadata:
+      labels:
+        app-name: departments-postgres-server
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:11.1
+          ports:
+            - containerPort: 5432
+              name: postgres
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: departments
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: storage
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: departments-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: departments-postgres-server-service
+spec:
+  ports:
+    - port: 5432
+      targetPort: postgres
+  selector:
+    app-name: departments-postgres-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: departments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: departments
+  template:
+    metadata:
+      labels:
+        app-name: departments
+    spec:
+      containers:
+        - name: departments
+          image: landrzejewski/departments
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          livenessProbe:
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 180
+            httpGet:
+              port: 8000
+              path: /swagger-ui.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: departments-service
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+  selector:
+    app-name: departments
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: users-volume
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/users_data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: users-volume
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-postgres-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: users-postgres-server
+  template:
+    metadata:
+      labels:
+        app-name: users-postgres-server
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:11.1
+          ports:
+            - containerPort: 5432
+              name: postgres
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: users
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: storage
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: users-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-postgres-server-service
+spec:
+  ports:
+    - port: 5432
+      targetPort: postgres
+  selector:
+    app-name: users-postgres-server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app-name: users
+  template:
+    metadata:
+      labels:
+        app-name: users
+    spec:
+      containers:
+        - name: users
+          image: landrzejewski/users
+          ports:
+            - containerPort: 8001
+              name: http
+          envFrom:
+            - configMapRef:
+                name: cloud-config
+          livenessProbe:
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 180
+            httpGet:
+              port: 8001
+              path: /swagger-ui.html
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-service
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+  selector:
+    app-name: users
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: cloud-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /departments(/|$)(.*)
+            backend:
+              serviceName: departments-service
+              servicePort: 80
+          - path: /users(/|$)(.*)
+            backend:
+              serviceName: users-service
+              servicePort: 80
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: admin-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            backend:
+              serviceName: zipkin-server-service
+              servicePort: 80
